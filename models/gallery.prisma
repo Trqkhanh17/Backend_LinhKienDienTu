@@ -1,0 +1,7 @@
+model Gallery {
+  gal_id  Int    @id @default(autoincrement())
+  pro_id  Int
+  gal_img String
+
+  @@map("Gallery")
+}

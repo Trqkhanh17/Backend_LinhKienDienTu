@@ -1,20 +1,16 @@
-import { Express } from "express";
-import connection from "../config/database";
-import { runInThisContext } from "vm";
-import { RowDataPacket } from "mysql2";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import "dotenv/config";
-import { text } from "stream/consumers";
+import accountRepository from "../repositories/accountRepository";
+
 export const checkEmail = async (email: string) => {
     try {
-        const [result] = await connection.execute<RowDataPacket[]>("SELECT *FROM Account WHERE acc_email = ?", [email]);
-        console.log(result);
-        
-        if (result.length === 0) {
+        const result = await accountRepository.findByEmail(email);
+
+        if (!result) {
             return null;
         }
-        return result;
+        return [result];
     } catch (error) {
         return null;
     }

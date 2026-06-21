@@ -1,0 +1,17 @@
+model Order {
+  order_id      Int       @id @default(autoincrement())
+  cus_id        Int
+  staff_id      Int?
+  order_name    String
+  order_phone   String
+  order_email   String
+  order_address String
+  order_status  Int
+  order_note    String?
+  order_create  DateTime?
+  order_update  DateTime?
+  pay_status    Int
+  is_rejected   Int       @default(0)
+
+  @@map("Order")
+}

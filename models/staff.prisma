@@ -1,0 +1,8 @@
+model Staff {
+  staff_id    Int    @id @default(autoincrement())
+  staff_name  String
+  staff_phone String
+  staff_email String @unique
+
+  @@map("Staff")
+}

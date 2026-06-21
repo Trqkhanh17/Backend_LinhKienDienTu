@@ -1,0 +1,14 @@
+model Customer {
+  cus_id       Int       @id @default(autoincrement())
+  cus_name     String
+  cus_address  String
+  cus_birthday DateTime?
+  cus_phone    String
+  cus_email    String    @unique
+  cus_create   DateTime?
+  cus_update   DateTime?
+  cus_avatar   String?
+  is_banned    Int       @default(0)
+
+  @@map("Customer")
+}
