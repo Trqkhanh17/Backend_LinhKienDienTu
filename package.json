@@ -2,15 +2,19 @@
   "name": "myapp",
   "version": "0.0.0",
   "private": true,
-  "main": "./bin/www.ts",
+  "main": "./dist/bin/www.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./bin/www.ts",
+    "start": "node dist/bin/www.js",
     "dev": "nodemon ./bin/www.ts ",
-    "tspath": "node -r tsconfig-paths/register dist/index.js",
-    "build": "tsc"
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy",
+    "prisma:push": "prisma db push",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.3",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -24,9 +28,8 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
-    "mysql2": "^3.11.4",
     "nodemailer": "^6.9.16",
-    "paypal-rest-sdk": "^1.8.1",
+    "prisma": "^6.19.3",
     "tsconfig-paths": "^4.2.0"
   },
   "devDependencies": {
@@ -42,7 +45,6 @@
     "@types/multer": "^1.4.12",
     "@types/node": "^22.9.1",
     "@types/nodemailer": "^6.4.16",
-    "@types/paypal-rest-sdk": "^1.7.9",
     "nodemon": "^3.1.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"

@@ -1,0 +1,66 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: linhkien-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      HOST_NAME: 0.0.0.0
+      PORT: 8000
+      DATABASE_URL: mysql://root_user:123456@mysql:3306/DBLinhKienDienTu
+    ports:
+      - '8000:8000'
+    depends_on:
+      mysql:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    command: npm start
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://localhost:8000/']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: linhkien-migrate
+    restart: "no"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: mysql://root_user:123456@mysql:3306/DBLinhKienDienTu
+    depends_on:
+      mysql:
+        condition: service_healthy
+    command: npx prisma db push
+
+  mysql:
+    image: mysql:8.0
+    container_name: linhkien-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: DBLinhKienDienTu
+      MYSQL_USER: root_user
+      MYSQL_PASSWORD: 123456
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-uroot', '-p123456']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:

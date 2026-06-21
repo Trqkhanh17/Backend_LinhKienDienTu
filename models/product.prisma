@@ -1,0 +1,15 @@
+model Product {
+  pro_id          Int       @id @default(autoincrement())
+  cate_id         Int
+  pro_name        String
+  pro_img         String?
+  price           Float
+  pro_origin      String
+  pro_brand       String
+  pro_description String
+  pro_create      DateTime?
+  pro_update      DateTime?
+  is_delete       Int       @default(0)
+
+  @@map("Product")
+}

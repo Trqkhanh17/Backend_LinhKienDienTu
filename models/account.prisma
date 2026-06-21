@@ -1,0 +1,7 @@
+model Account {
+  acc_email String @id
+  password  String
+  is_admin  Int
+
+  @@map("Account")
+}

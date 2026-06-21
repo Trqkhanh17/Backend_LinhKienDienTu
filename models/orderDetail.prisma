@@ -1,0 +1,9 @@
+model OrderDetail {
+  detail_id       Int   @id @default(autoincrement())
+  order_id        Int
+  pro_id          Int
+  detail_price    Float
+  detail_quantity Int
+
+  @@map("Order_Details")
+}

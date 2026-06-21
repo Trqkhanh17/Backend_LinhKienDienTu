@@ -10,7 +10,6 @@ import stockRoute from "./stockRoute";
 import orderRoute from "./orderRoute";
 import uploadfileRoute from "./uploadfileRoute";
 import orderdetailRoute from "./orderdetailRoute";
-import paypalRoute from "./paypalRoute";
 import mailRoute from "./mailRoute";
 import analytisRoute from "./analytisRoute";
 const VERSION_API = "/api/v1";
@@ -30,7 +29,6 @@ const initApiRoutes = (app: Express) => {
   app.use(VERSION_API, orderRoute());
   app.use(VERSION_API,uploadfileRoute());
   app.use(VERSION_API, orderdetailRoute());
-  app.use(VERSION_API, paypalRoute());
   app.use(VERSION_API, mailRoute());
   app.use(VERSION_API, analytisRoute());
   return app;

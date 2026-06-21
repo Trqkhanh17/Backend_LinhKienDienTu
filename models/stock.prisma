@@ -1,0 +1,11 @@
+model Stock {
+  stock_id     Int       @id @default(autoincrement())
+  staff_id     Int?
+  pro_id       Int
+  stock_import Int       @default(0)
+  stock_export Int       @default(0)
+  date_import  DateTime?
+  stock_update DateTime?
+
+  @@map("Stock")
+}
