@@ -66,8 +66,9 @@ const updateStock = async (body: any): Promise<ServiceResponse> => {
 
 const exportStock = async (body: any): Promise<ServiceResponse> => {
   const { pro_id, stock_export } = body;
+  const exportQuantity = Number(stock_export);
 
-  if (!pro_id || !stock_export || stock_export < 0) {
+  if (!pro_id || !stock_export || !Number.isFinite(exportQuantity) || exportQuantity <= 0) {
     return {
       message: "Stock ID và số lượng xuất phải được cung cấp và không được âm",
       statusCode: 400,
@@ -81,10 +82,18 @@ const exportStock = async (body: any): Promise<ServiceResponse> => {
     return { message: "Kho hàng không tồn tại", statusCode: 404, httpStatus: 404 };
   }
 
+  if (stock.stock_import < exportQuantity) {
+    return {
+      message: "Số lượng xuất vượt quá số lượng tồn kho",
+      statusCode: 400,
+      httpStatus: 400,
+    };
+  }
+
   await stockRepository.updateExportByProductId(
     Number(pro_id),
-    stock.stock_import - Number(stock_export),
-    stock.stock_export + Number(stock_export)
+    stock.stock_import - exportQuantity,
+    stock.stock_export + exportQuantity
   );
 
   return { message: "Cập nhật kho hàng thành công", statusCode: 200 };

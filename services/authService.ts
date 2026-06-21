@@ -160,20 +160,24 @@ const signUpStaff = async (body: any): Promise<ServiceResponse> => {
 };
 
 const getProfile = async (auth?: string): Promise<ServiceResponse> => {
-  if (auth === "" || !auth) {
-    return { message: "", statusCode: 403 };
+  if (!auth || !auth.startsWith("Bearer ")) {
+    return { message: "Unauthorized", statusCode: 401 };
   }
 
   const token = auth.split(" ")[1];
-  const user = jwt.verify(token, process.env.JWT_KEY + "") as JwtPayload;
+  try {
+    const user = jwt.verify(token, process.env.JWT_KEY + "") as JwtPayload;
 
-  if (user.role === 0) {
-    const result = await customerRepository.findByEmail(user.email);
+    if (user.role === 0) {
+      const result = await customerRepository.findByEmail(user.email);
+      return { data: result ? [result] : [], statusCode: 200 };
+    }
+
+    const result = await staffRepository.findByEmail(user.email);
     return { data: result ? [result] : [], statusCode: 200 };
+  } catch (error) {
+    return { message: "Invalid or expired token", statusCode: 401 };
   }
-
-  const result = await staffRepository.findByEmail(user.email);
-  return { data: result ? [result] : [], statusCode: 200 };
 };
 
 export default {

@@ -62,24 +62,33 @@ const findCustomer = async (inforFind: string): Promise<ServiceResponse> => {
 };
 
 const getProfileCustomerByEmail = async (auth?: string): Promise<ServiceResponse> => {
-  const token = auth ? auth.split(" ")[1] : "";
-  const decoded = jwt.verify(
-    token,
-    process.env.JWT_KEY ? process.env.JWT_KEY : ""
-  ) as JwtPayload;
-  const email = decoded ? decoded.email : "";
-
-  if (!email) {
-    return { message: "Email is Require!!", statusCode: 400, httpStatus: 400 };
+  if (!auth || !auth.startsWith("Bearer ")) {
+    return { message: "Unauthorized", statusCode: 401 };
   }
 
-  const result = await customerRepository.findByEmail(email);
+  const token = auth.split(" ")[1];
 
-  if (!result) {
-    return { message: "Customer not found", statusCode: 404 };
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_KEY ? process.env.JWT_KEY : ""
+    ) as JwtPayload;
+    const email = decoded ? decoded.email : "";
+
+    if (!email) {
+      return { message: "Email is Require!!", statusCode: 400, httpStatus: 400 };
+    }
+
+    const result = await customerRepository.findByEmail(email);
+
+    if (!result) {
+      return { message: "Customer not found", statusCode: 404 };
+    }
+
+    return { message: result as any, statusCode: 200 };
+  } catch (error) {
+    return { message: "Invalid or expired token", statusCode: 401 };
   }
-
-  return { message: result as any, statusCode: 200 };
 };
 
 export default {

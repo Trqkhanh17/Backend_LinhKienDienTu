@@ -108,7 +108,21 @@ const findAccount = async (accEmail: string): Promise<ServiceResponse> => {
   return { data: result, statusCode: 200 };
 };
 
-const getProfileAccountByEmail = findAccount;
+const getProfileAccountByEmail = async (
+  accEmail: string
+): Promise<ServiceResponse> => {
+  if (!accEmail) {
+    return { message: "Email is Require!!", statusCode: 400, httpStatus: 400 };
+  }
+
+  const result = await accountRepository.findByEmail(accEmail);
+
+  if (!result) {
+    return { message: "Account not found", statusCode: 404 };
+  }
+
+  return { data: [result], statusCode: 200 };
+};
 
 export default {
   banndedCustomer,
