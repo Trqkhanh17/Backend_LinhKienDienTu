@@ -15,7 +15,7 @@ const galleryRoute = () => {
     route.put('/gallery/update',verifyAdmin, validate({ body: updateGallerySchema }), updateGallery);
     route.delete('/gallery/delete',verifyAdmin, validate({ body: deleteGallerySchema }), deleteGallery);
     //route.get('/gallery/find', findGallery);
-    route.get('/gallery/getGalleryById',verifyAdmin, validate({ body: getGalleryByIdSchema }), getGalleryById);
+    route.get('/gallery/getGalleryById/:galId',verifyAdmin, validate({ params: getGalleryByIdSchema }), getGalleryById);
     return route;
 };
 export default galleryRoute;

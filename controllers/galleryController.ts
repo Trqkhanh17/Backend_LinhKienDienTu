@@ -45,7 +45,7 @@ export const getGalleryById = async (req: Request, res: Response) => {
   try {
     return sendServiceResponse(
       res,
-      await galleryService.getGalleryById(req.params.galId || req.body.galId)
+      await galleryService.getGalleryById(req.params.galId)
     );
   } catch (error) {
     console.log("Get gallery by id error: ", error);

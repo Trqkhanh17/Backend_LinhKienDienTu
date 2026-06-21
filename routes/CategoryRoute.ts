@@ -16,7 +16,7 @@ const cateroryRoute = () => {
     route.post("/category/create",verifyAdmin, validate({ body: createCategorySchema }), createCategory);
     route.put("/category/update",verifyAdmin, validate({ body: updateCategorySchema }), updateCategory);
     route.delete("/category/delete",verifyAdmin, validate({ body: deleteCategorySchema }), deleteCategory);
-    route.get("/caterory/find", validate({ body: findCategorySchema }), findCategory);
+    route.get("/category/find", validate({ query: findCategorySchema }), findCategory);
     route.get("/category/:cateId", validate({ params: numericIdParam("cateId") }), getCategoryById);
     return route;
 };

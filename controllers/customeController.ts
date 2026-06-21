@@ -24,7 +24,7 @@ export const findCustomer = async (req: Request, res: Response) => {
   try {
     return sendServiceResponse(
       res,
-      await customerService.findCustomer(req.body.inforFind)
+      await customerService.findCustomer(String(req.query.inforFind))
     );
   } catch (error) {
     console.log("Find Customer Error: ", error);

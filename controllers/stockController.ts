@@ -52,7 +52,7 @@ export const deleteStock = async (req: Request, res: Response) => {
 
 export const findStock = async (req: Request, res: Response) => {
   try {
-    return sendServiceResponse(res, await stockService.findStock(req.body.pro_name));
+    return sendServiceResponse(res, await stockService.findStock(String(req.query.pro_name)));
   } catch (error) {
     console.log("Find stock error: ", error);
     return res.status(500).json("Internal Server Error");

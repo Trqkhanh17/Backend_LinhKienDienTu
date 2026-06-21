@@ -9,7 +9,7 @@ const route = express.Router();
 const staffRoute = () => {
   route.get("/staff/list-all", getAllStaff);
   route.put("/staff/update-profile",verifyAdmin, validate({ body: updateStaffProfileSchema }), updateStaffProfile);
-  route.get("/staff/find-staff",verifyAdmin, validate({ body: findStaffSchema }), findStaff);
+  route.get("/staff/find-staff",verifyAdmin, validate({ query: findStaffSchema }), findStaff);
   route.get("/staff/:staffId", validate({ params: numericIdParam("staffId") }), getStaffById);
   return route;
 };

@@ -9,9 +9,9 @@ const accountRoute = () => {
   route.get("/account/list-all",verifyAdmin, getAllAccount);
   route.put("/account/ban-account",verifyAdmin, validate({ body: accountEmailSchema }), banndedCustomer);
   route.put("/account/unban-account",verifyAdmin, validate({ body: accountEmailSchema }), unBannedCustomer);
-  route.get("/account/find-by-email",verifyAdmin, validate({ body: accountEmailSchema }), findAccount);
+  route.get("/account/find-by-email",verifyAdmin, validate({ query: accountEmailSchema }), findAccount);
   route.put("/account/change-password",verifyToken, validate({ body: changePasswordSchema }), changePassword);
-  route.get("/account/getaccount-by-email",verifyAdmin, validate({ body: accountEmailSchema }), getProfileAccountByEmail);
+  route.get("/account/getaccount-by-email",verifyAdmin, validate({ query: accountEmailSchema }), getProfileAccountByEmail);
   return route;
 };
 

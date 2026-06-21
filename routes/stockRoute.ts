@@ -19,7 +19,7 @@ const stockRoute = () => {
     route.put("/stock/update",verifyAdmin, validate({ body: updateStockSchema }), updateStock);
     route.put("/stock/export", validate({ body: exportStockSchema }), exportStock);    
     route.delete("/stock/delete",verifyAdmin, validate({ body: deleteStockSchema }), deleteStock);
-    route.get("/stock/find",verifyAdmin, validate({ body: findStockSchema }), findStock);
+    route.get("/stock/find",verifyAdmin, validate({ query: findStockSchema }), findStock);
     route.get("/stock/getStockByproId/:proId", validate({ params: numericIdParam("proId") }), getStockByProId);
     return route;
 };

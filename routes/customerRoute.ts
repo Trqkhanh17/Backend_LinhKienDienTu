@@ -8,7 +8,7 @@ const customerRoute = () => {
     router.get('/customer/list-all',verifyAdmin, getAllCustomer);  
     router.get('/customer/profile-by-email',verifyAdmin, getProfileCustomerByEmail);
     router.put('/customer/update',verifyToken, validate({ body: updateCustomerSchema }), updateCustomer);
-    router.get('/customer/findCustomer',verifyAdmin, validate({ body: findCustomerSchema }), findCustomer);
+    router.get('/customer/findCustomer',verifyAdmin, validate({ query: findCustomerSchema }), findCustomer);
     return router;
 };
 export default customerRoute;
