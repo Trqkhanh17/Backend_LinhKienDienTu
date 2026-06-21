@@ -1,15 +1,23 @@
 import express, { Router } from "express";
 import { createCategory, deleteCategory, findCategory, getAllCategory, getCategoryById, updateCategory } from "../controllers/categotyController";
 import { verifyAdmin } from "../middleware";
+import { validate } from "../middleware/validate";
+import { numericIdParam } from "../validations/commonValidation";
+import {
+    createCategorySchema,
+    deleteCategorySchema,
+    findCategorySchema,
+    updateCategorySchema,
+} from "../validations/categoryValidation";
 
 const route = Router();
 const cateroryRoute = () => {
     route.get("/category/list-all", getAllCategory);
-    route.post("/category/create",verifyAdmin, createCategory);
-    route.put("/category/update",verifyAdmin, updateCategory);
-    route.delete("/category/delete",verifyAdmin, deleteCategory);
-    route.get("/caterory/find", findCategory);
-    route.get("/category/:cateId", getCategoryById);
+    route.post("/category/create",verifyAdmin, validate({ body: createCategorySchema }), createCategory);
+    route.put("/category/update",verifyAdmin, validate({ body: updateCategorySchema }), updateCategory);
+    route.delete("/category/delete",verifyAdmin, validate({ body: deleteCategorySchema }), deleteCategory);
+    route.get("/caterory/find", validate({ body: findCategorySchema }), findCategory);
+    route.get("/category/:cateId", validate({ params: numericIdParam("cateId") }), getCategoryById);
     return route;
 };
 export default cateroryRoute;
