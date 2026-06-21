@@ -1,6 +1,6 @@
-# Backend Linh Kien Dien Tu
+# Electronics Components Backend
 
-Backend Node.js/Express cho he thong linh kien dien tu. Du an dung TypeScript, Prisma ORM va MySQL.
+Node.js/Express backend for an electronics components system. The project uses TypeScript, Prisma ORM, MySQL, and Docker.
 
 ## Tech Stack
 
@@ -13,20 +13,20 @@ Backend Node.js/Express cho he thong linh kien dien tu. Du an dung TypeScript, P
 - Firebase Storage
 - Nodemailer
 
-## Cau Truc Chinh
+## Project Structure
 
 ```txt
-routes/          dinh nghia API endpoint
-controllers/     nhan req, goi service, tra res
-services/        validate va xu ly nghiep vu
-repositories/    thao tac database bang Prisma
-models/          Prisma schema va cac model .prisma
-config/          cau hinh Prisma/Firebase
-middleware/      auth middleware
-utils/           helper chung
+routes/          API route definitions
+controllers/     request/response layer
+services/        validation and business logic
+repositories/    database access through Prisma
+models/          Prisma schema and model files
+config/          Prisma/Firebase configuration
+middleware/      authentication middleware
+utils/           shared helpers
 ```
 
-Luồng xử lý:
+Request flow:
 
 ```txt
 Route -> Controller -> Service -> Repository -> Prisma -> MySQL
@@ -34,25 +34,25 @@ Route -> Controller -> Service -> Repository -> Prisma -> MySQL
 
 ## Environment
 
-Tao file `.env` tu file mau:
+Create your `.env` file from the example:
 
 ```bash
 cp .env.example .env
 ```
 
-Khi chay backend truc tiep tren may:
+When running the backend directly on your machine:
 
 ```env
 DATABASE_URL="mysql://root_user:123456@localhost:3306/DBLinhKienDienTu"
 ```
 
-Khi chay trong Docker Compose, service `api` se override thanh:
+When running inside Docker Compose, the `api` and `migrate` services override the database host:
 
 ```env
 DATABASE_URL="mysql://root_user:123456@mysql:3306/DBLinhKienDienTu"
 ```
 
-Can dien them:
+You also need to provide:
 
 ```env
 JWT_KEY="..."
@@ -66,101 +66,98 @@ VITE_FIREBASE_MESSAGING_SENDER_ID="..."
 VITE_FIREBASE_APP_ID="..."
 ```
 
-## Chay Bang Docker
+## Run With Docker
 
-Chay toan bo backend + MySQL:
+Start the backend, migration job, and MySQL:
 
 ```bash
 docker compose up -d --build
 ```
 
-Backend chay tai:
+The backend will be available at:
 
 ```txt
 http://localhost:8000
 ```
 
-Xem log API:
+View API logs:
 
 ```bash
 docker compose logs -f api
 ```
 
-Xem log MySQL:
+View MySQL logs:
 
 ```bash
 docker compose logs -f mysql
 ```
 
-Dung container:
+Stop containers:
 
 ```bash
 docker compose down
 ```
 
-Dung va xoa luon du lieu database:
+Stop containers and remove database data:
 
 ```bash
 docker compose down -v
 ```
 
-## Docker Hoat Dong Nhu The Nao
+## How Docker Works Here
 
-`docker-compose.yml` tao 2 service:
-
-```txt
-api    backend Express/Prisma
-mysql  MySQL 8 database
-```
-
-`mysql` tao database:
+`docker-compose.yml` defines three services:
 
 ```txt
-DBLinhKienDienTu
+mysql    MySQL 8 database
+migrate  Prisma schema synchronization job
+api      Express/Prisma backend
 ```
 
-voi user:
+The `mysql` service creates:
 
 ```txt
-root_user / 123456
+database: DBLinhKienDienTu
+user:     root_user
+password: 123456
 ```
 
-`migrate` doi `mysql` healthy roi dong bo schema:
+The `migrate` service waits for MySQL to become healthy, then runs:
 
 ```bash
 npx prisma db push
 ```
 
-`api` doi `migrate` chay xong roi start backend:
+The `api` service waits for `migrate` to complete successfully, then starts:
 
 ```bash
 npm start
 ```
 
-Trong Docker, backend ket noi database bang host `mysql`, khong phai `localhost`.
+Inside Docker, the backend connects to MySQL using the Compose service name `mysql`, not `localhost`.
 
 ## Dockerfile
 
-Dockerfile dung multi-stage build:
+The Dockerfile uses a multi-stage build:
 
 ```txt
-deps     npm ci
-build    prisma generate + npm run build + prune dev deps
-runtime  chay compiled JS bang node dist/bin/www.js
+deps     install dependencies with npm ci
+build    generate Prisma Client, build TypeScript, prune dev dependencies
+runtime  run compiled JavaScript with node dist/bin/www.js
 ```
 
-Runtime image:
+The runtime image:
 
-- chi copy `dist`, `models`, `node_modules` production
-- chay bang non-root user `appuser`
-- co healthcheck HTTP
-- khong dung `nodemon`
+- copies only `dist`, `models`, production `node_modules`, and Prisma config
+- runs as a non-root user
+- includes an HTTP healthcheck
+- does not use `nodemon` or `ts-node`
 
-## Chay Local Khong Docker
+## Run Locally Without Docker
 
-Can co MySQL dang chay tren may hoac MySQL Docker map ra `localhost:3306`.
+You need a running MySQL database on your machine, or a MySQL container mapped to `localhost:3306`.
 
-Cai dependencies:
+Install dependencies:
 
 ```bash
 npm install
@@ -172,13 +169,13 @@ Generate Prisma Client:
 npm run prisma:generate
 ```
 
-Dong bo schema vao database:
+Synchronize schema to the database:
 
 ```bash
 npm run prisma:push
 ```
 
-Chay dev:
+Run the development server:
 
 ```bash
 npm run dev
@@ -186,19 +183,19 @@ npm run dev
 
 ## Prisma
 
-Prisma schema nam trong thu muc:
+Prisma schema files are stored in:
 
 ```txt
 models/
 ```
 
-File chinh:
+Main schema file:
 
 ```txt
 models/schema.prisma
 ```
 
-Model rieng:
+Model files:
 
 ```txt
 models/account.prisma
@@ -212,13 +209,13 @@ models/staff.prisma
 models/stock.prisma
 ```
 
-`prisma.config.ts` tro Prisma vao thu muc `models`:
+`prisma.config.ts` points Prisma to the `models` directory:
 
 ```ts
 schema: "models"
 ```
 
-Lenh hay dung:
+Common Prisma commands:
 
 ```bash
 npm run prisma:generate
@@ -227,52 +224,52 @@ npm run prisma:migrate
 npx prisma validate
 ```
 
-Ghi chu:
+Notes:
 
-- Development co the dung `prisma db push`.
-- Production/CI-CD nen dung migration that: `prisma migrate deploy`.
+- Use `prisma db push` for local development or early schema iteration.
+- Use real migrations and `prisma migrate deploy` for production/CI-CD.
 
 ## Scripts
 
 ```bash
-npm run dev              # chay dev bang nodemon
-npm run typecheck        # kiem tra TypeScript, khong emit JS
-npm run build            # build TypeScript ra dist/
-npm start                # chay production tu dist/bin/www.js
+npm run dev              # run the dev server with nodemon
+npm run typecheck        # type-check TypeScript without emitting JS
+npm run build            # build TypeScript into dist/
+npm start                # run production build from dist/bin/www.js
 npm run prisma:generate  # generate Prisma Client
-npm run prisma:push      # push schema vao DB
-npm run prisma:migrate   # deploy migrations
+npm run prisma:push      # push schema to the database
+npm run prisma:migrate   # deploy Prisma migrations
 ```
 
 ## CI/CD Notes
 
-Docker image co the build khong can `DATABASE_URL` that:
+The Docker image can be built without a real `DATABASE_URL`:
 
 ```bash
-docker compose build api
+docker compose build api migrate
 ```
 
-Khi deploy production nen:
+For production deployment, prefer:
 
 ```bash
 npx prisma migrate deploy
 npm start
 ```
 
-Khong nen dung `nodemon` hoac `ts-node` trong production container.
+Do not run `nodemon` or `ts-node` in the production container.
 
 ## API Prefix
 
-Tat ca route duoc gan prefix:
+All routes are mounted under:
 
 ```txt
 /api/v1
 ```
 
-Vi du:
+Examples:
 
 ```txt
-GET /api/v1/category/list-all
-GET /api/v1/product/list-all
+GET  /api/v1/category/list-all
+GET  /api/v1/product/list-all
 POST /api/v1/login
 ```
