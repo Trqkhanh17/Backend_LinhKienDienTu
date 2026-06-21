@@ -17,7 +17,7 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-      migrate:
+      db-sync:
         condition: service_completed_successfully
     command: npm start
     healthcheck:
@@ -27,12 +27,12 @@ services:
       retries: 3
       start_period: 20s
 
-  migrate:
+  db-sync:
     build:
       context: .
       dockerfile: Dockerfile
       target: runtime
-    container_name: linhkien-migrate
+    container_name: linhkien-db-sync
     restart: "no"
     env_file:
       - .env

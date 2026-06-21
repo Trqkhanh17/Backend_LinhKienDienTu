@@ -46,7 +46,7 @@ When running the backend directly on your machine:
 DATABASE_URL="mysql://root_user:123456@localhost:3306/DBLinhKienDienTu"
 ```
 
-When running inside Docker Compose, the `api` and `migrate` services override the database host:
+When running inside Docker Compose, the `api` and `db-sync` services override the database host:
 
 ```env
 DATABASE_URL="mysql://root_user:123456@mysql:3306/DBLinhKienDienTu"
@@ -68,7 +68,7 @@ VITE_FIREBASE_APP_ID="..."
 
 ## Run With Docker
 
-Start the backend, migration job, and MySQL:
+Start the backend, schema sync job, and MySQL:
 
 ```bash
 docker compose up -d --build
@@ -110,7 +110,7 @@ docker compose down -v
 
 ```txt
 mysql    MySQL 8 database
-migrate  Prisma schema synchronization job
+db-sync  Prisma schema synchronization job
 api      Express/Prisma backend
 ```
 
@@ -122,13 +122,13 @@ user:     root_user
 password: 123456
 ```
 
-The `migrate` service waits for MySQL to become healthy, then runs:
+The `db-sync` service waits for MySQL to become healthy, then runs:
 
 ```bash
 npx prisma db push
 ```
 
-The `api` service waits for `migrate` to complete successfully, then starts:
+The `api` service waits for `db-sync` to complete successfully, then starts:
 
 ```bash
 npm start
@@ -169,7 +169,7 @@ Generate Prisma Client:
 npm run prisma:generate
 ```
 
-Synchronize schema to the database:
+Push the Prisma schema to the database:
 
 ```bash
 npm run prisma:push
@@ -215,19 +215,32 @@ models/stock.prisma
 schema: "models"
 ```
 
+For this personal project, the Prisma schema is the source of truth. After changing model files, push the schema directly to MySQL:
+
+```bash
+npm run prisma:push
+```
+
+If you want to recreate the Docker database from scratch:
+
+```bash
+docker compose down -v
+docker compose up -d --build
+```
+
 Common Prisma commands:
 
 ```bash
 npm run prisma:generate
 npm run prisma:push
-npm run prisma:migrate
 npx prisma validate
 ```
 
 Notes:
 
-- Use `prisma db push` for local development or early schema iteration.
-- Use real migrations and `prisma migrate deploy` for production/CI-CD.
+- `prisma db push` compares `models/` with the current database and applies the needed schema changes directly.
+- This project does not keep Prisma migration files.
+- For a production or team workflow later, switch to Prisma Migrate with `prisma migrate dev` and `prisma migrate deploy`.
 
 ## Scripts
 
@@ -237,8 +250,7 @@ npm run typecheck        # type-check TypeScript without emitting JS
 npm run build            # build TypeScript into dist/
 npm start                # run production build from dist/bin/www.js
 npm run prisma:generate  # generate Prisma Client
-npm run prisma:push      # push schema to the database
-npm run prisma:migrate   # deploy Prisma migrations
+npm run prisma:push      # push schema changes to the database
 ```
 
 ## CI/CD Notes
@@ -246,15 +258,17 @@ npm run prisma:migrate   # deploy Prisma migrations
 The Docker image can be built without a real `DATABASE_URL`:
 
 ```bash
-docker compose build api migrate
+docker compose build api db-sync
 ```
 
 For production deployment, prefer:
 
 ```bash
-npx prisma migrate deploy
+npx prisma db push
 npm start
 ```
+
+For real production projects, use Prisma Migrate instead of `db push`.
 
 Do not run `nodemon` or `ts-node` in the production container.
 
