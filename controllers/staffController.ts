@@ -22,7 +22,7 @@ export const updateStaffProfile = async (req: Request, res: Response) => {
 
 export const findStaff = async (req: Request, res: Response) => {
   try {
-    return sendServiceResponse(res, await staffService.findStaff(req.body.inforFind));
+    return sendServiceResponse(res, await staffService.findStaff(String(req.query.inforFind)));
   } catch (error) {
     console.log("Find staff error: ", error);
     return res.status(500).json("Internal Server Error");
@@ -33,7 +33,7 @@ export const getStaffById = async (req: Request, res: Response) => {
   try {
     return sendServiceResponse(
       res,
-      await staffService.getStaffById(req.params.staffId || req.body.staffId)
+      await staffService.getStaffById(req.params.staffId)
     );
   } catch (error) {
     return res.status(500).json("Internal Server Error");

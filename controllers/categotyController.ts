@@ -45,8 +45,7 @@ export const deleteCategory = async (req: express.Request, res: express.Response
 };
 export const findCategory = async (req: express.Request, res: express.Response) => {
     try {
-        const { cate_name} = req.body;
-        const result = await categoryService.findCategory(cate_name);
+        const result = await categoryService.findCategory(String(req.query.cate_name));
         return res.status(result.statusCode === 400 ? 400 : 200).json(result);
     } catch (error) {
         console.log("Find category error: ", error);

@@ -45,7 +45,7 @@ export const findProduct = async (req: Request, res: Response) => {
   try {
     return sendServiceResponse(
       res,
-      await productService.findProduct(req.body.inforFind)
+      await productService.findProduct(String(req.query.inforFind))
     );
   } catch (error) {
     console.log("Find product error: ", error);

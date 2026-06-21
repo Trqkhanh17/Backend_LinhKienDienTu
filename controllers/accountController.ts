@@ -48,7 +48,7 @@ export const findAccount = async (req: Request, res: Response) => {
   try {
     return sendServiceResponse(
       res,
-      await accountService.findAccount(req.body.acc_email)
+      await accountService.findAccount(String(req.query.acc_email))
     );
   } catch (error) {
     console.log("Find Account Error: ", error);
@@ -60,7 +60,7 @@ export const getProfileAccountByEmail = async (req: Request, res: Response) => {
   try {
     return sendServiceResponse(
       res,
-      await accountService.getProfileAccountByEmail(req.body.acc_email)
+      await accountService.getProfileAccountByEmail(String(req.query.acc_email))
     );
   } catch (error) {
     console.log("Get Profile Account Error: ", error);

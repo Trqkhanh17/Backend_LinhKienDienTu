@@ -29,7 +29,8 @@
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.16",
     "prisma": "^6.19.3",
-    "tsconfig-paths": "^4.2.0"
+    "tsconfig-paths": "^4.2.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
